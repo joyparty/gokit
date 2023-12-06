@@ -16,8 +16,8 @@ type valueOf[T any] struct {
 	value *atomic.Value
 }
 
-// NewAtomicValueOf 构造泛型atomic.Value
-func NewAtomicValueOf[T any]() ValueOf[T] {
+// NewValueOf 构造泛型atomic.Value
+func NewValueOf[T any]() ValueOf[T] {
 	v := &valueOf[T]{
 		value: &atomic.Value{},
 	}
