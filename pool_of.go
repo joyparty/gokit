@@ -11,7 +11,13 @@ type PoolOf[T any] struct {
 // NewPoolOf 构造函数
 func NewPoolOf[T any](factory func() T) *PoolOf[T] {
 	p := &sync.Pool{}
-	if factory != nil {
+
+	if factory == nil {
+		p.New = func() any {
+			var x T
+			return x
+		}
+	} else {
 		p.New = func() any {
 			return factory()
 		}
