@@ -17,14 +17,14 @@ func BackoffRetry(ctx context.Context, count int, wait time.Duration, fn func() 
 
 func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn func() error) (err error) {
 	tryExecute := func(wait time.Duration) error {
-		if wait == 0 {
-			return fn()
-		}
-
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
+			if wait == 0 {
+				return fn()
+			}
+
 			select {
 			case <-ctx.Done():
 				return ctx.Err()

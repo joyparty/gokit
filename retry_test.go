@@ -43,4 +43,16 @@ func TestRetry(t *testing.T) {
 	if err != nil {
 		t.Errorf("Retry failed unexpectedly, error: %v", err)
 	}
+
+	// Test case 4: Retry fails after context is cancelled
+	errCancel := errors.New("context cancelled")
+	ctx, cancel := context.WithCancelCause(context.Background())
+	cancel(errCancel)
+
+	err = Retry(ctx, count, wait, func() error {
+		return nil
+	})
+	if context.Cause(ctx) != errCancel {
+		t.Errorf("Retry did not return expected error, expected: %v, got: %v", errCancel, err)
+	}
 }

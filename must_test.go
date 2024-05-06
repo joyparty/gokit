@@ -6,43 +6,49 @@ import (
 )
 
 func TestMustReturn(t *testing.T) {
-	// Test case 1: No error
-	value1 := 42
-	err1 := error(nil)
-	result1 := MustReturn(value1, err1)
-	if result1 != value1 {
-		t.Errorf("MustReturn failed, expected: %v, got: %v", value1, result1)
+	// No Error
+	foo := func() (int, error) {
+		return 42, nil
 	}
 
-	// Test case 2: With error
-	value2 := 0
-	err2 := errors.New("some error")
+	result1, _ := foo()
+	actual1 := MustReturn(foo())
+	if result1 != actual1 {
+		t.Errorf("expected %d, got %d", result1, actual1)
+	}
+
+	// return error
+	fooError := func() (int, error) {
+		return 0, errors.New("some error")
+	}
 	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("MustReturn did not panic")
+		if v := recover(); v == nil {
+			t.Error("MustReturn did not panic")
 		}
 	}()
-	MustReturn(value2, err2)
+	_ = MustReturn(fooError())
 }
 
 func TestMustReturn2(t *testing.T) {
-	// Test case 1: No error
-	value1 := 42
-	value2 := "hello"
-	err1 := error(nil)
-	result1, result2 := MustReturn2(value1, value2, err1)
-	if result1 != value1 || result2 != value2 {
-		t.Errorf("MustReturn2 failed, expected: (%v, %v), got: (%v, %v)", value1, value2, result1, result2)
+	// No Error
+	foo := func() (int, string, error) {
+		return 42, "hello", nil
 	}
 
-	// Test case 2: With error
-	value3 := 0
-	value4 := ""
-	err2 := errors.New("some error")
+	result1, result2, _ := foo()
+	actual1, actual2 := MustReturn2(foo())
+	if result1 != actual1 || result2 != actual2 {
+		t.Errorf("expected %d, %s, got %d, %s", result1, result2, actual1, actual2)
+	}
+
+	// return error
+	fooError := func() (int, string, error) {
+		return 0, "", errors.New("some error")
+	}
 	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("MustReturn2 did not panic")
+		if v := recover(); v == nil {
+			t.Error("MustReturn2 did not panic")
 		}
 	}()
-	MustReturn2(value3, value4, err2)
+	_, _ = MustReturn2(fooError())
 }
