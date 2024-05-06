@@ -24,8 +24,13 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(wait):
-			return fn()
+		default:
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(wait):
+				return fn()
+			}
 		}
 	}
 
