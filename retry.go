@@ -2,20 +2,25 @@ package gokit
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
-// Retry 在首次执行失败之后，根据指定的次数重试执行，每次重试之间等待一段时间
+// Retry 重试执行，最多不超过指定次数，每次间隔固定时长
 func Retry(ctx context.Context, count int, wait time.Duration, fn func() error) error {
 	return retry(ctx, count, wait, false, fn)
 }
 
-// BackoffRetry 在首次执行失败之后，根据指定的次数重试执行，每次重试之间等待一段时间，等待时间每次翻倍
+// BackoffRetry 重试执行，最多不超过指定次数，每次间隔时长翻倍
 func BackoffRetry(ctx context.Context, count int, wait time.Duration, fn func() error) error {
 	return retry(ctx, count, wait, true, fn)
 }
 
 func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn func() error) (err error) {
+	if count <= 0 {
+		return errors.New("invalid retry count")
+	}
+
 	tryExecute := func(wait time.Duration) error {
 		select {
 		case <-ctx.Done():
@@ -38,7 +43,7 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		return
 	}
 
-	for i := 0; i < count; i++ {
+	for i, c := 0, count-1; i < c; i++ {
 		if err = tryExecute(wait); err == nil {
 			return
 		}
