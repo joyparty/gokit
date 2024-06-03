@@ -21,7 +21,7 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		return errors.New("invalid retry count")
 	}
 
-	errs := make([]error, 0, count)
+	var errs []error
 	tryExecute := func(wait time.Duration) (err error) {
 		defer func() {
 			if err != nil {
