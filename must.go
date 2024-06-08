@@ -1,5 +1,9 @@
 package gokit
 
+import (
+	"fmt"
+)
+
 // Must 用于检查错误，如果错误不为空，则抛出异常
 func Must(err error) {
 	if err != nil {
@@ -40,4 +44,14 @@ func MustReturn2[T1 any, T2 any](t1 T1, t2 T2, err error) (T1, T2) {
 		panic(err)
 	}
 	return t1, t2
+}
+
+// MustTo 类型转换失败则panic
+func MustTo[T any](v any) T {
+	if x, ok := v.(T); ok {
+		return x
+	}
+
+	var x T
+	panic(fmt.Errorf("%T cannot convert to %T", v, x))
 }
