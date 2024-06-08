@@ -25,7 +25,7 @@ func TestRetry(t *testing.T) {
 	err = Retry(context.Background(), count, wait, func() error {
 		return expectedErr
 	})
-	if err != expectedErr {
+	if !errors.Is(err, expectedErr) {
 		t.Errorf("Retry did not return expected error, expected: %v, got: %v", expectedErr, err)
 	}
 
