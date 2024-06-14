@@ -93,6 +93,9 @@ type ElementOf[T any] struct {
 }
 
 func newElementOf[T any](element *list.Element) *ElementOf[T] {
+	if element == nil {
+		return nil
+	}
 	return &ElementOf[T]{element: element}
 }
 
