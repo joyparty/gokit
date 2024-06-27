@@ -101,12 +101,12 @@ func newElementOf[T any](element *list.Element) *ElementOf[T] {
 
 // Next 下一个元素
 func (e *ElementOf[T]) Next() *ElementOf[T] {
-	return &ElementOf[T]{element: e.element.Next()}
+	return newElementOf[T](e.element.Next())
 }
 
 // Prev 上一个元素
 func (e *ElementOf[T]) Prev() *ElementOf[T] {
-	return &ElementOf[T]{element: e.element.Prev()}
+	return newElementOf[T](e.element.Prev())
 }
 
 // Value 返回元素的值
