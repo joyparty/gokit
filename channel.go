@@ -33,9 +33,9 @@ func FanIn[T any](input ...<-chan T) <-chan T {
 	output := make(chan T)
 
 	go func() {
-		var wg sync.WaitGroup
 		defer close(output)
 
+		var wg sync.WaitGroup
 		for _, v := range input {
 			wg.Add(1)
 			go func(c <-chan T) {
@@ -46,7 +46,6 @@ func FanIn[T any](input ...<-chan T) <-chan T {
 				}
 			}(v)
 		}
-
 		wg.Done()
 	}()
 
