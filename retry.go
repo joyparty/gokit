@@ -21,14 +21,7 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		return errors.New("invalid retry count")
 	}
 
-	var errs []error
-	tryExecute := func(wait time.Duration) (err error) {
-		defer func() {
-			if err != nil {
-				errs = append(errs, err)
-			}
-		}()
-
+	tryExecute := func(wait time.Duration) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
@@ -60,5 +53,5 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		}
 	}
 
-	return errors.Join(errs...)
+	return
 }
