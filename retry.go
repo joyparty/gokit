@@ -21,30 +21,31 @@ func retry(ctx context.Context, count int, wait time.Duration, backoff bool, fn 
 		return errors.New("invalid retry count")
 	}
 
-	tryExecute := func(wait time.Duration) error {
+	tryExecute := func(wait time.Duration) (stop bool, err error) {
 		select {
 		case <-ctx.Done():
-			return ctx.Err()
+			return true, ctx.Err()
 		default:
 			if wait == 0 {
-				return fn()
+				return false, fn()
 			}
 
 			select {
 			case <-ctx.Done():
-				return ctx.Err()
+				return true, ctx.Err()
 			case <-time.After(wait):
-				return fn()
+				return false, fn()
 			}
 		}
 	}
 
-	if err = tryExecute(0); err == nil {
+	var stop bool
+	if stop, err = tryExecute(0); err == nil || stop {
 		return
 	}
 
 	for i, c := 0, count-1; i < c; i++ {
-		if err = tryExecute(wait); err == nil {
+		if stop, err = tryExecute(wait); err == nil || stop {
 			return
 		}
 
