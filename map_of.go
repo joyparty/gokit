@@ -58,6 +58,8 @@ func (mo *MapOf[K, V]) Range(f func(key K, value V) bool) {
 }
 
 // ToMap to map
+//
+// Deprecated: concurrency issues.
 func (mo *MapOf[K, V]) ToMap() map[K]V {
 	result := make(map[K]V)
 	mo.Range(func(k K, v V) bool {
@@ -69,6 +71,8 @@ func (mo *MapOf[K, V]) ToMap() map[K]V {
 }
 
 // Count 总数
+//
+// Deprecated: concurrency issues.
 func (mo *MapOf[K, V]) Count() (count int64) {
 	mo.values.Range(func(k, v any) bool {
 		count++
