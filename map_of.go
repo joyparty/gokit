@@ -14,16 +14,6 @@ func NewMapOf[K comparable, V any]() *MapOf[K, V] {
 	}
 }
 
-// CompareAndDelete 比较并删除
-func (mo *MapOf[K, V]) CompareAndDelete(key K, old V) (deleted bool) {
-	return mo.values.CompareAndDelete(key, old)
-}
-
-// CompareAndSwap 比较并替换
-func (mo *MapOf[K, V]) CompareAndSwap(key K, old, new V) bool {
-	return mo.values.CompareAndSwap(key, old, new)
-}
-
 // Load 根据key查询结果
 func (mo *MapOf[K, V]) Load(key K) (value V, found bool) {
 	if v, ok := mo.values.Load(key); ok {
@@ -65,14 +55,6 @@ func (mo *MapOf[K, V]) Range(f func(key K, value V) bool) {
 	mo.values.Range(func(k, v any) bool {
 		return f(k.(K), v.(V))
 	})
-}
-
-// Swap 替换值
-func (mo *MapOf[K, V]) Swap(key K, value V) (previous V, loaded bool) {
-	if v, ok := mo.values.Swap(key, value); ok {
-		return v.(V), true
-	}
-	return
 }
 
 // ToMap to map
